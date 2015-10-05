@@ -16,3 +16,5 @@ def item_det(request, listing_id):
 	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 	resp = json.loads(resp_json)
 	return render(request, 'det.html', resp["resp"])
+def about(request):
+	return render(request,'about.html')
