@@ -93,22 +93,21 @@ def profile(request):
 def createListing(request):
 	form = ListingForm()
 	auth = request.COOKIES.get('auth')
-	#if not auth:
-	#	return HttpResponseRedirect('/home')
+	if not auth:
+		return HttpResponseRedirect('/home')
 	if request.method == 'POST':
 		form = ListingForm(data=request.POST)
 		if form.is_valid():
 			title=form.cleaned_data['title']
 			description=form.cleaned_data['description']	
-			jsona = json.loads(auth)		
+			jsona = json.loads(auth)	
 			post_data = {'title': title, 'description': description, 'creator': jsona['user_id'], 'available': True, 'u_id': jsona['user_id']}
 			post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
 			req = urllib.request.Request('http://exp-api:8000/createlisting', data=post_encoded, method='POST')
 			
 			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 			resp = json.loads(resp_json)
-			return JsonResponse(resp)
-			response = HttpResponseRedirect('create_listing_success.html')
+			response = HttpResponseRedirect('/create_listing_success/')
 			return response
 		else:
 			print(form.errors)
@@ -119,6 +118,6 @@ def createListing(request):
 	return render(request, "create_listing_success.html")
 
 def createListingSuccess(request):
-	return render("create_listing_success.html")
+	return render(request, "create_listing_success.html")
 
     
