@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 import urllib.request
 import urllib.parse
 import json
+from django.http import HttpResponse
 
 from cs4501.forms import UserForm
 from cs4501.forms import LoginForm
@@ -12,7 +13,7 @@ def render_home(request):
 	req = urllib.request.Request('http://exp-api:8000/home')
 	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 	resp = json.loads(resp_json)
-	return render(request, 'home.html', resp["resp"])
+	return render(request, 'home.html')
 
 def item_det(request, listing_id):
 	req = urllib.request.Request('http://exp-api:8000/listing/' + listing_id)
@@ -22,21 +23,35 @@ def item_det(request, listing_id):
 def about(request):
 	return render(request,'about.html')
 def create_user(request):
-	account_form = UserForm()
 	if request.method == 'POST':
-		account_form = UserForm(data=request.POST)		 
-	
+		account_form = UserForm(request.POST)
+		if account_form.is_valid():
+			first_name = account_form.cleaned_data['first_name']
+			last_name = account_form.cleaned_data['last_name']
+			username = account_form.cleaned_data['username']
+			password = account_form.cleaned_data['password']
+			post_data = {'username':username, 'password': password, 'first_name': first_name, 'last_name': last_name, 'type_of_user': 'general'}
+			post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+			req = urllib.request.Request('http://exp-api:8000/createuser', data=post_encoded, method='POST')
+			resp_json = urllib.request.urlopen(req).read().decode('utf-8')		
+			
+
+		else:
+			print(account_form.errors)
 	else:
-		account_form = UserForm()		
+		account_form = UserForm()	
+	
 	return render(request,'createUser.html', {'account_form': account_form})
 
 def login(request):
 	form = LoginForm()
 	if request.method == 'POST':
 		form = LoginForm(data=request.POST)
-
+		
 	else:
+		
 		form = LoginForm()
+		
 	return render(request, 'login.html', {'form': form})
 
 def log_out(request):
