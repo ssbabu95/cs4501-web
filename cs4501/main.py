@@ -4,10 +4,12 @@ import urllib.request
 import urllib.parse
 import json
 from django.http import HttpResponse
+from http import cookies
 
 from cs4501.forms import UserForm
 from cs4501.forms import LoginForm
 from cs4501.forms import ListingForm
+#import service api error codes, if any
 
 def render_home(request):
 	req = urllib.request.Request('http://exp-api:8000/home')
@@ -54,7 +56,7 @@ def login(request):
 			req = urllib.request.Request('http://exp-api:8000/login', data=post_encoded, method='POST')
 			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 			resp = json.loads(resp_json)
-			
+			resp.set_cookie("auth", resp['authenticator']) #attempt to retrive authenticator
 		else:
 			print(form.errors)
 	else:		
@@ -63,19 +65,42 @@ def login(request):
 	return render(request, 'login.html', {'form': form})
 
 def log_out(request):
+	req = urllib.request.Request('http://exp-api:8000/logout', data=post_encoded, method='POST')
+	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+	resp = json.loads(resp_json)
+	resp.delete_cookie("auth", resp['authenticator'])
 	return render(request, 'logout.html')
 	# more stuff here
+
 def profile(request):
 	return render(request, 'profile.html')
 	# more stuff here
 
 def createListing(request):
+	auth = request.COOKIES.get('auth')
+
 	form = ListingForm()
 	if request.method == 'POST':
 		form = ListingForm(data=request.POST)
 
-	else:
-		form = ListingForm()
-	return render(request, 'create_listing.html', {'form': form})
+	if not auth:
+    	#print(account_form.errors)
+    	return HttpResponseRedirect(reverse("login") + "?next=" + reverse("create_listing")
+
+	
+	if request.method == 'GET':
+    	return render("create_listing.html", {'form': form})
+    f = ListingForm(request.POST)
+    req = urllib.request.Request('http://exp-api:8000/createlisting', data=post_encoded, method='POST')
+	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+	resp = json.loads(resp_json)
+    if resp and not resp['ok']:
+        if resp['error'] == exp_srvc_errors.E_UNKNOWN_AUTH:
+            # exp service reports invalid authenticator -- treat like user not logged in
+            return HttpResponseRedirect(reverse("login") + "?next=" + reverse("create_listing")
+     #...
+     return render("create_listing_success.html")
 
 
+
+    
