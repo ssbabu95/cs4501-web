@@ -12,4 +12,8 @@ urlpatterns = patterns('',
     url(r'^item/(\d+)$', main.item_det),
     url(r'^about/$', main.about, name='about'),
     url(r'^create_user/$', main.create_user),
+    url(r'^login/$', main.login),
+    url(r'^logout/$', main.log_out),
+    url(r'^profile/$', main.profile),
+    url(r'^create_listing/$', main.createListing),
 )

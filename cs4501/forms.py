@@ -13,3 +13,11 @@ class UserForm(forms.Form):
 	username = forms.CharField(max_length=25, label='Username')
 	password = forms.CharField(widget=forms.PasswordInput())
 	type_of_user = forms.ChoiceField(choices = User_Types, label='Select user type') 
+
+class LoginForm(forms.Form):
+	uname = forms.CharField(label='Username', max_length=25)
+	pword = forms.CharField(label='Password', max_length=25, widget=forms.PasswordInput)
+
+class ListingForm(forms.Form):
+	title = forms.CharField(label='Title', max_length=16)
+	description = forms.CharField()#(blank=True=)

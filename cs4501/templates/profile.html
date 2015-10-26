@@ -5,7 +5,14 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </head>
-
+<script type="text/javascript">
+    var uname = '<?=$_POST['uname']?>';
+    var pword = '<?=$_POST['pword']?>';
+    document.cookie = "username=" + uname + ";expires=Fri, 25 Dec 2020 00:00:00 UTC; path=/";
+    function unset(){
+        document.cookie = "username=; expires=Thu, 25 Oct 2015 00:00:00 UTC";
+    }
+</script>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -27,7 +34,13 @@
                         <a href="#">Listings</a> <!--for now, can make something else-->
                     </li>
                     <li>
-                        <a href="profile.html">Profile</a>
+                        <a href="/profile">Profile</a>
+                    </li>
+                    <li>
+                        <a href="/logout" onclick="unset()">Logout</a>
+                    </li>
+                    <li>
+                        <a href="/create_listing">Create a Listing</a>    
                     </li>
                     <li>
                         <a href="#">Contact</a>
