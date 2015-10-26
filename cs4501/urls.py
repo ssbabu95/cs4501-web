@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^home$', main.render_home),
     url(r'^item/(\d+)$', main.item_det),
     url(r'^about/$', main.about, name='about'),
+    url(r'^create_user/$', main.create_user),
 )
