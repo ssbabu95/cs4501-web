@@ -6,12 +6,12 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </head>
 <script type="text/javascript">
-    var uname = '<?=$_POST['uname']?>';
+    /*var uname = '<?=$_POST['uname']?>';
     var pword = '<?=$_POST['pword']?>';
     document.cookie = "username=" + uname + ";expires=Fri, 25 Dec 2020 00:00:00 UTC; path=/";
     function unset(){
         document.cookie = "username=; expires=Thu, 25 Oct 2015 00:00:00 UTC";
-    }
+    }*/
 </script>
 <body>
     <!-- Navigation -->
@@ -37,7 +37,7 @@
                         <a href="/profile">Profile</a>
                     </li>
                     <li>
-                        <a href="/logout" onclick="unset()">Logout</a>
+                        <a href="/logout">Logout</a>
                     </li>
                     <li>
                         <a href="/create_listing">Create a Listing</a>    
