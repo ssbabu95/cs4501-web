@@ -46,7 +46,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Music Freelancer </a>
+                <a class="navbar-brand" href="/home">Music Freelancer </a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -75,7 +75,7 @@
         <div class = "jumbotron">
                 <h2>Create User Page </h2>
                 <p class="lead"></p>
-		<form style="padding-top:5%;" id="account_form" method="POST" action="/create_user/" encenctype="multipart/form-data">
+		<form style="padding-top:5%;" id="account_form" method="POST" action="/create_user/" enctype="multipart/form-data">
           	  {% csrf_token %}
            	 {{ account_form.as_p }}
             

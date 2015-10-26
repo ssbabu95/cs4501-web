@@ -1,10 +1,10 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 import urllib.request
 import urllib.parse
 import json
-from django.http import HttpResponse
 from http import cookies
+from django.core.urlresolvers import reverse
 
 from cs4501.forms import UserForm
 from cs4501.forms import LoginForm
@@ -32,11 +32,12 @@ def create_user(request):
 			last_name = account_form.cleaned_data['last_name']
 			username = account_form.cleaned_data['username']
 			password = account_form.cleaned_data['password']
-			post_data = {'username':username, 'password': password, 'first_name': first_name, 'last_name': last_name, 'type_of_user': 'general'}
+			post_data = {'username': username, 'password': password, 'first_name': first_name, 'last_name': last_name, 'type_of_user': 'general'}
 			post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
 			req = urllib.request.Request('http://exp-api:8000/createuser', data=post_encoded, method='POST')
-			resp_json = urllib.request.urlopen(req).read().decode('utf-8')		
-				
+			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+			resp = json.loads(resp_json)	
+			return render('home.html')	
 
 		else:
 			print(account_form.errors)
@@ -56,9 +57,12 @@ def login(request):
 			req = urllib.request.Request('http://exp-api:8000/login', data=post_encoded, method='POST')
 			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 			resp = json.loads(resp_json)
-			authenticator = resp['authenticator']
-			response = HttpResponseRedirect('profile.html')
-			response.set_cookie("auth", authenticator) #attempt to retrive authenticator
+			if not resp or 'error' in resp:
+				return render(request, 'login.html')
+			authenticator = {'auth': resp['authenticator'], 'user_id': resp['user_id']}
+			response = HttpResponseRedirect('/profile')
+			response.set_cookie("auth", json.dumps(authenticator))
+			return response
 		else:
 			print(form.errors)
 	else:		
@@ -67,11 +71,20 @@ def login(request):
 	return render(request, 'login.html', {'form': form})
 
 def log_out(request):
+	auth = request.COOKIES.get('auth')
+	jsona = json.loads(auth)	
+	post_data = {'u_id': jsona['user_id']}
+	post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
 	req = urllib.request.Request('http://exp-api:8000/logout', data=post_encoded, method='POST')
 	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 	resp = json.loads(resp_json)
-	return render(request, 'logout.html')
+	response = HttpResponseRedirect('/logoutsuccess')
+	response.set_cookie("auth", '', expires=-1)
+	return response
 	# more stuff here
+
+def logoutsuccess(request):
+	return render(request, 'logout.html')
 
 def profile(request):
 	return render(request, 'profile.html')
@@ -80,27 +93,30 @@ def profile(request):
 def createListing(request):
 	form = ListingForm()
 	auth = request.COOKIES.get('auth')
-	if not auth:
-		return HttpResponseRedirect(reverse("login.html") + "?next=" + reverse("create_listing.html")
+	#if not auth:
+	#	return HttpResponseRedirect('/home')
 	if request.method == 'POST':
 		form = ListingForm(data=request.POST)
 		if form.is_valid():
-			username=form.cleaned_data['title']
-			password=form.cleaned_data['description']				
-			post_data = {'title': username, 'description': password}
+			title=form.cleaned_data['title']
+			description=form.cleaned_data['description']	
+			jsona = json.loads(auth)		
+			post_data = {'title': title, 'description': description, 'creator': jsona['user_id'], 'available': True, 'u_id': jsona['user_id']}
 			post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
 			req = urllib.request.Request('http://exp-api:8000/createlisting', data=post_encoded, method='POST')
+			
 			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 			resp = json.loads(resp_json)
+			return JsonResponse(resp)
 			response = HttpResponseRedirect('create_listing_success.html')
-
+			return response
 		else:
 			print(form.errors)
 
 	if request.method == 'GET':
-    	return render("create_listing.html", {'form': form})
+    		return render(request, "create_listing.html", {'form': form})
     #f = ListingForm(request.POST)
-    return render("create_listing_success.html")
+	return render(request, "create_listing_success.html")
 
 def createListingSuccess(request):
 	return render("create_listing_success.html")
