@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^logout/$', main.log_out),
     url(r'^profile/$', main.profile),
     url(r'^create_listing/$', main.createListing),
+    url(r'^create_listing_success/$', main.createListingSuccess),
 )

@@ -56,7 +56,9 @@ def login(request):
 			req = urllib.request.Request('http://exp-api:8000/login', data=post_encoded, method='POST')
 			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 			resp = json.loads(resp_json)
-			resp.set_cookie("auth", resp['authenticator']) #attempt to retrive authenticator
+			authenticator = resp['authenticator']
+			response = HttpResponseRedirect('profile.html')
+			response.set_cookie("auth", authenticator) #attempt to retrive authenticator
 		else:
 			print(form.errors)
 	else:		
@@ -68,7 +70,6 @@ def log_out(request):
 	req = urllib.request.Request('http://exp-api:8000/logout', data=post_encoded, method='POST')
 	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 	resp = json.loads(resp_json)
-	resp.delete_cookie("auth", resp['authenticator'])
 	return render(request, 'logout.html')
 	# more stuff here
 
@@ -77,30 +78,31 @@ def profile(request):
 	# more stuff here
 
 def createListing(request):
-	auth = request.COOKIES.get('auth')
-
 	form = ListingForm()
+	auth = request.COOKIES.get('auth')
+	if not auth:
+		return HttpResponseRedirect(reverse("login.html") + "?next=" + reverse("create_listing.html")
 	if request.method == 'POST':
 		form = ListingForm(data=request.POST)
+		if form.is_valid():
+			username=form.cleaned_data['title']
+			password=form.cleaned_data['description']				
+			post_data = {'title': username, 'description': password}
+			post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+			req = urllib.request.Request('http://exp-api:8000/createlisting', data=post_encoded, method='POST')
+			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+			resp = json.loads(resp_json)
+			response = HttpResponseRedirect('create_listing_success.html')
 
-	if not auth:
-    	#print(account_form.errors)
-    	return HttpResponseRedirect(reverse("login") + "?next=" + reverse("create_listing")
+		else:
+			print(form.errors)
 
-	
 	if request.method == 'GET':
     	return render("create_listing.html", {'form': form})
-    f = ListingForm(request.POST)
-    req = urllib.request.Request('http://exp-api:8000/createlisting', data=post_encoded, method='POST')
-	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-	resp = json.loads(resp_json)
-    if resp and not resp['ok']:
-        if resp['error'] == exp_srvc_errors.E_UNKNOWN_AUTH:
-            # exp service reports invalid authenticator -- treat like user not logged in
-            return HttpResponseRedirect(reverse("login") + "?next=" + reverse("create_listing")
-     #...
-     return render("create_listing_success.html")
+    #f = ListingForm(request.POST)
+    return render("create_listing_success.html")
 
-
+def createListingSuccess(request):
+	return render("create_listing_success.html")
 
     
