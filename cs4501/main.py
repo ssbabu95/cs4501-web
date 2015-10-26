@@ -34,7 +34,7 @@ def create_user(request):
 			post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
 			req = urllib.request.Request('http://exp-api:8000/createuser', data=post_encoded, method='POST')
 			resp_json = urllib.request.urlopen(req).read().decode('utf-8')		
-			
+				
 
 		else:
 			print(account_form.errors)
@@ -44,12 +44,20 @@ def create_user(request):
 	return render(request,'createUser.html', {'account_form': account_form})
 
 def login(request):
-	form = LoginForm()
 	if request.method == 'POST':
 		form = LoginForm(data=request.POST)
-		
-	else:
-		
+		if form.is_valid():
+			username=form.cleaned_data['uname']
+			password=form.cleaned_data['pword']				
+			post_data = {'username': username, 'password': password}
+			post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+			req = urllib.request.Request('http://exp-api:8000/login', data=post_encoded, method='POST')
+			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+			resp = json.loads(resp_json)
+			
+		else:
+			print(form.errors)
+	else:		
 		form = LoginForm()
 		
 	return render(request, 'login.html', {'form': form})
