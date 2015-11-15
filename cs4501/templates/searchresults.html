@@ -67,6 +67,9 @@
                 <h1>Search Results</h1>
                 <p class="lead"></p>
                 <ul class="list-unstyled">
+			{% for hit in hits %}
+			<li>{{hit}}</li>
+			{% endfor %}
                     <li></li>
                     <li></li>
                 </ul>

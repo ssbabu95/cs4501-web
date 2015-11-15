@@ -50,7 +50,7 @@
             <div class="input-group">
                 <!-- <input type="text" class="form-control" placeholder="Enter Query Here"> -->
                 <!-- <span class="input-group-btn"><button class="btn btn-primary" type="button">Search</button></span> -->
-        	<form style="padding-top:5%;" id="form" method="POST" action="/profile/">
+        	<form style="padding-top:5%;" id="form" method="POST" action="/searchresults/">
 			{% csrf_token %}
 			{{ form.as_p }}
 			<input class = "btn btn-primary btn-md" type = submit value = 'Search'>

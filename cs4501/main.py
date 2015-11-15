@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 import urllib.request
 import urllib.parse
 import json
+from django import template
 from http import cookies
 from django.core.urlresolvers import reverse
 
@@ -11,6 +12,10 @@ from cs4501.forms import LoginForm
 from cs4501.forms import ListingForm
 from cs4501.forms import SearchForm
 #import service api error codes, if any
+register = template.Library()
+@register.filter
+def getunder(d, k):
+    return d.get(k, None)
 
 def render_home(request):
 	req = urllib.request.Request('http://exp-api:8000/home')
@@ -137,4 +142,12 @@ def createListingSuccess(request):
 	return render(request, "create_listing_success.html")
 
 def searchresults(request):
-	return render(request, "searchresults.html")
+	post_data = {'searchinput': request.POST.get('search_input')}
+	post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+	req = urllib.request.Request('http://exp-api:8000/search', data=post_encoded, method='POST')
+	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+	resp = json.loads(resp_json)
+	#return JsonResponse(resp['hits']['hits'], safe=False)
+
+
+	return render(request, "searchresults.html", {'hits': resp['hits']['hits']})
