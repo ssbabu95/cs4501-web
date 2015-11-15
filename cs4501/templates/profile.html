@@ -48,9 +48,14 @@
                 </ul>
             <div class = "col-lg-3" style="margin-top:10px; align: right;">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Enter Query Here">
-                <span class="input-group-btn"><button class="btn btn-primary" type="button">Search</button></span>
-            </div>
+                <!-- <input type="text" class="form-control" placeholder="Enter Query Here"> -->
+                <!-- <span class="input-group-btn"><button class="btn btn-primary" type="button">Search</button></span> -->
+        	<form style="padding-top:5%;" id="form" method="POST" action="/profile/">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<input class = "btn btn-primary btn-md" type = submit value = 'Search'>
+		</form>	    
+	    </div>
             </div>
             </div>
             <!-- /.navbar-collapse -->

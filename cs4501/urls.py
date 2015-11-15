@@ -18,4 +18,6 @@ urlpatterns = patterns('',
     url(r'^profile/$', main.profile),
     url(r'^create_listing/$', main.createListing),
     url(r'^create_listing_success/$', main.createListingSuccess),
+    url(r'^searchresults/$', main.searchresults),
+#    url(r'^search/$', main.search),
 )

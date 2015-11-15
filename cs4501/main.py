@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from cs4501.forms import UserForm
 from cs4501.forms import LoginForm
 from cs4501.forms import ListingForm
+from cs4501.forms import SearchForm
 #import service api error codes, if any
 
 def render_home(request):
@@ -87,8 +88,22 @@ def logoutsuccess(request):
 	return render(request, 'logout.html')
 
 def profile(request):
-	return render(request, 'profile.html')
-	# more stuff here
+	form = SearchForm()
+	if request.method == 'POST':
+		form = SearchForm(data=request.POST)
+		if form.is_valid():
+			searchinput=form.cleaned_data['search_input']
+			post_data = {'searchinput': searchinput}
+			post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+			req = urllib.request.Request('http://exp-api:8000/search', data=post_encoded, method='POST')
+			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+			resp = json.loads(resp_json)
+	else:
+		print(form.errors)
+	if request.method == 'GET': 
+		return render(request, "profile.html", {'form': form})
+	return render(request, "profile.html")
+	
 
 def createListing(request):
 	form = ListingForm()
@@ -120,4 +135,5 @@ def createListing(request):
 def createListingSuccess(request):
 	return render(request, "create_listing_success.html")
 
-    
+def searchresults(request):
+	return render(request, "searchresults.html")

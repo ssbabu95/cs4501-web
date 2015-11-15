@@ -21,3 +21,7 @@ class LoginForm(forms.Form):
 class ListingForm(forms.Form):
 	title = forms.CharField(label='Title', max_length=16)
 	description = forms.CharField()#(blank=True=)
+
+class SearchForm(forms.Form):
+	search_input = forms.CharField(label='Search', max_length=16)
+
