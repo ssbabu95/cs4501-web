@@ -38,7 +38,7 @@ def create_user(request):
 			req = urllib.request.Request('http://exp-api:8000/createuser', data=post_encoded, method='POST')
 			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 			resp = json.loads(resp_json)	
-			return render('home.html')	
+			return render(request, 'home.html')	
 
 		else:
 			print(account_form.errors)
