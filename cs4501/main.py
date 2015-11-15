@@ -122,6 +122,7 @@ def createListing(request):
 			
 			resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 			resp = json.loads(resp_json)
+
 			response = HttpResponseRedirect('/create_listing_success/')
 			return response
 		else:
