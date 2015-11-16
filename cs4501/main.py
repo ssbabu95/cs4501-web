@@ -53,6 +53,9 @@ def create_user(request):
 	return render(request,'createUser.html', {'account_form': account_form})
 
 def login(request):
+	auth = request.COOKIES.get('auth')
+	if auth:
+		return HttpResponseRedirect('/profile')
 	if request.method == 'POST':
 		form = LoginForm(data=request.POST)
 		if form.is_valid():
@@ -93,6 +96,10 @@ def logoutsuccess(request):
 	return render(request, 'logout.html')
 
 def profile(request):
+	auth = request.COOKIES.get('auth')
+	if not auth:
+		return HttpResponseRedirect('/login')
+
 	form = SearchForm()
 	if request.method == 'POST':
 		form = SearchForm(data=request.POST)
