@@ -43,12 +43,29 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"> </li>
-                        <li><a href="/about/">About</a></li>
-                 	<li><a href="/create_user/">Create Account</a></li>
-			<li><a href="/login/">Login</a></li>
-		    <li><a href="#">Contact</a></li>
-            <li><a href="profile">Profile</a></li>              
+                        <li>
+                            <a href="#">Listings</a>
+                        </li>
+                 	    <li>
+                            <a href="/profile">Profile</a>
+                        </li>
+		                <li>
+                            <a href="/logout">Logout</a>
+                        </li>
+		              <li>
+                        <a href="/create_listing">Create a Listing</a>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                </ul>
+            <div class = "col-lg-3" style="margin-top:10px; align: right;">
+            <div class="input-group">
+            <form style="padding-top:5%;" id="form" method="POST" action="/searchresults/">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input class = "btn btn-primary btn-md" type = submit value = 'Search'>
+            </form>           
             </div>
             <!-- /.navbar-collapse -->
         </div>
