@@ -155,6 +155,7 @@ def searchresults(request):
 	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 	resp = json.loads(resp_json)
 	#return JsonResponse(resp['hits']['hits'], safe=False)
-
+	for res in resp['hits']['hits']:
+                res['source'] = res.pop('_source')
 
 	return render(request, "searchresults.html", {'hits': resp['hits']['hits']})

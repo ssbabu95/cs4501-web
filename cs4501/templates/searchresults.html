@@ -66,14 +66,22 @@
             <div class="col-lg-12 text-center">
                 <h1>Search Results</h1>
                 <p class="lead"></p>
+                <table border="1" style="width:100%">
                 <ul class="list-unstyled">
-			{% for hit in hits %}
-			<li>{{hit}}</li>
-			{% endfor %}
-                    <li></li>
-                    <li></li>
+                <thead>
+                	<th>Title</td>
+                        <th>Description</td>
+                        <th>Creator</td>
+                </thead>
+                {% for hit in hits %}
+                <tr>
+               	        <td>{{hit.source.title}}</td>
+                        <td>{{hit.source.description}}</td>
+                        <td>{{hit.source.creator}}</td>
+               	</tr>
+                {% endfor %}
                 </ul>
-                
+                </table>
                 <div class="footer navbar-fixed-bottom">
                 <ul class="list-unstyled">
                     <li><font color="#837E7C">Music Freelancer</font></li>
