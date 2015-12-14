@@ -1,5 +1,5 @@
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+rom django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_405
 import urllib.request
 import urllib.parse
 import json
@@ -12,24 +12,38 @@ from cs4501.forms import LoginForm
 from cs4501.forms import ListingForm
 from cs4501.forms import SearchForm
 #import service api error codes, if any
+
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+from django.utils.cache import get_cache_key
+from django.core.cache.utils import make_template_fragment_key
+
 register = template.Library()
 @register.filter
 def getunder(d, k):
     return d.get(k, None)
 
 def render_home(request):
-	req = urllib.request.Request('http://exp-api:8000/home')
-	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-	resp = json.loads(resp_json)
-	return render(request, 'home.html', resp["resp"])
+        key = "homepage"
+        page = cache.get(key)
+        resp = page;
+        if not page:
+                req = urllib.request.Request('http://exp-api:8000/home')
+                resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+                resp = json.loads(resp_json)
+                page = resp
+                cache.set(key, page, 60)
+        return render(request, 'home.html', resp["resp"])
 
 def item_det(request, listing_id):
 	req = urllib.request.Request('http://exp-api:8000/listing/' + listing_id)
 	resp_json = urllib.request.urlopen(req).read().decode('utf-8')
 	resp = json.loads(resp_json)
 	return render(request, 'det.html', resp["resp"])
+@cache_page(None)
 def about(request):
 	return render(request,'about.html')
+@cache_page(None)
 def create_user(request):
 	if request.method == 'POST':
 		account_form = UserForm(request.POST)
@@ -78,7 +92,7 @@ def login(request):
 		form = LoginForm()
 		
 	return render(request, 'login.html', {'form': form})
-
+@cache_page(None)
 def log_out(request):
 	auth = request.COOKIES.get('auth')
 	jsona = json.loads(auth)	
@@ -116,7 +130,7 @@ def profile(request):
 		return render(request, "profile.html", {'form': form})
 	return render(request, "profile.html")
 	
-
+@cache_page(60)
 def createListing(request):
 	form = ListingForm()
 	auth = request.COOKIES.get('auth')
