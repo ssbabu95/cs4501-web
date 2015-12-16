@@ -57,6 +57,13 @@ ROOT_URLCONF = 'cs4501.urls'
 WSGI_APPLICATION = 'cs4501.wsgi.application'
 
 
+CACHES = {
+    'default': {
+        'BACKEND':'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION':'memcache:11211',
+    }
+}
+
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
@@ -67,12 +74,6 @@ DATABASES = {
     }
 }
 
-CACHES = {
-        'default':{
-                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-                'LOCATION': 'memcache:11211',
-        }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
