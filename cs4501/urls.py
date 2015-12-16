@@ -19,5 +19,8 @@ urlpatterns = patterns('',
     url(r'^create_listing/$', main.createListing),
     url(r'^create_listing_success/$', main.createListingSuccess),
     url(r'^searchresults/$', main.searchresults),
+    url(r'^base1/$', main.base1),
+    url(r'^base2/$', main.base2),
+    url(r'^base3/$', main.base3),
 #    url(r'^search/$', main.search),
 )

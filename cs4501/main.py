@@ -159,3 +159,12 @@ def searchresults(request):
                 res['source'] = res.pop('_source')
 
 	return render(request, "searchresults.html", {'hits': resp['hits']['hits']})
+
+def base1(request):
+	return render(request, "base.html")
+
+def base2(request):
+	return render(request, "base2.html")
+
+def base3(request):
+	return render(request, "base3.html")
